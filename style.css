@@ -25,3 +25,11 @@ html.stage-fullscreen,html.stage-fullscreen body{overflow:hidden;overscroll-beha
 .stage-fullscreen #toast{z-index:40}
 @media(max-width:760px){.stage-fullscreen .scene-heading{left:max(16px,env(safe-area-inset-left));top:max(16px,env(safe-area-inset-top))}.stage-fullscreen .scene-meta{display:none}#fullscreen-hint{top:auto;bottom:max(103px,calc(env(safe-area-inset-bottom) + 81px));right:16px;font-size:8px}.stage-fullscreen .scene-bottom{left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right))}}
 @media(max-height:500px) and (min-width:600px){.stage-fullscreen .scene-tools{top:max(14px,env(safe-area-inset-top));transform:none;display:flex}.stage-fullscreen .scene-tools button{width:42px;height:42px;min-height:42px;border-bottom:0;border-right:1px solid #b17be233}.stage-fullscreen #fullscreen{height:42px}.stage-fullscreen #fullscreen span,.stage-fullscreen .scene-meta,.stage-fullscreen .drag-hint,.stage-fullscreen .scene-footnote{display:none}.stage-fullscreen #fullscreen-hint{top:max(68px,calc(env(safe-area-inset-top) + 54px));bottom:auto;right:16px}.stage-fullscreen .scene-heading h2{font-size:18px;margin:12px 0 4px}.stage-fullscreen .scene-heading p{font-size:8px}.stage-fullscreen .scene-bottom{justify-content:center;bottom:max(12px,env(safe-area-inset-bottom))}}
+
+/* Music stays inside the fullscreen element; the official video remains visible. */
+.music-level{display:flex;align-items:center;gap:9px;margin-top:12px;font-size:11px;color:#e2ccef}
+.music-level label{white-space:nowrap}.music-level input{min-width:0;flex:1;accent-color:#d8ff68}.music-level output{min-width:32px;text-align:right}
+#music-status{color:#d8ff83;min-height:18px}.music-panel p{color:#c8b7d7}.music-panel-head button{color:#fff}
+#music-toggle.is-playing{background:#44205e;color:#fff0ff;border-color:#e8a2ff;box-shadow:0 0 18px #d68bff40}
+.music-button.is-playing .music-bars{color:#d8ff68}.music-button[aria-pressed=true] .play-icon{background:#d8ff68;color:#172309}
+@media(max-width:760px){.stage-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.stage-actions button{padding:11px 8px}.character-bubble{bottom:155px}.music-panel{position:absolute;bottom:145px;right:12px;width:330px;max-width:calc(100% - 24px)}.stage-fullscreen .music-panel{bottom:max(150px,calc(env(safe-area-inset-bottom) + 135px))}}

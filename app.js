@@ -1,4 +1,5 @@
-import {initFullscreen} from './fullscreen.js?v=20261028-13';
+import {initMusic} from './music.js?v=20261028-14';
+import {initFullscreen} from './fullscreen.js?v=20261028-14';
 initFullscreen();
 const $=s=>document.querySelector(s);
 const base='https://www.gov.taipei/News_Content.aspx?n=2044902FC839D045&s=';
@@ -39,8 +40,6 @@ function showSources(){const unique=[...new Map(stories.map(s=>[s.url,s])).value
 const publicURL=new URL('./',window.location.href).href;
 function showShare(){showDialog('TAKE THE STAGE WITH YOU',`<h2>把這一夜，分享出去。</h2><p>傳送舞台連結，或把整座舞台嵌入你的網站。</p><label for="share-url" class="eyebrow">舞台網址</label><input id="share-url" class="share-field" readonly><div class="share-actions"><button id="copy-link" class="dark-button">複製連結 ↗</button><button id="native-share" class="outline-button">分享…</button></div><label for="embed-code" class="eyebrow">IFRAME 嵌入碼</label><textarea id="embed-code" class="share-field" rows="5" readonly></textarea><div class="share-actions"><button id="copy-embed" class="dark-button">複製嵌入碼</button></div><p>建議寬度 100%、高度至少 760px。iframe 內可旋轉舞台、看資料與播放音樂。嵌入頁面需允許此網域，並保留 autoplay、fullscreen 權限。</p>`);$('#share-url').value=publicURL;$('#embed-code').value=`<iframe src="${publicURL}?embed=1" title="台北安可｜101雲端舞台（粉絲創作）" width="100%" height="820" style="border:0;border-radius:16px" loading="lazy" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;$('#copy-link').onclick=()=>copy($('#share-url'));$('#copy-embed').onclick=()=>copy($('#embed-code'));$('#native-share').onclick=async()=>{try{if(navigator.share)await navigator.share({title:'台北安可｜101雲端舞台',text:'粉絲創作的台北101低多邊形舞台',url:publicURL});else await copy($('#share-url'))}catch(e){if(e.name!=='AbortError')toast('請使用複製連結分享')}}}
 async function copy(field){try{await navigator.clipboard.writeText(field.value);toast('已複製，帶走你的舞台！')}catch{field.focus();field.select();toast('請長按選取文字，或按 Ctrl／⌘ + C 複製')}}
-$('#music-start').onclick=()=>{const panel=$('#music-panel');if(panel.hidden){panel.hidden=false;const frame=document.createElement('iframe');frame.src='https://www.youtube.com/embed/uKCiYJdv6Zg?autoplay=1&playsinline=1&loop=1&playlist=uKCiYJdv6Zg';frame.title='台北安可｜蔣萬安官方MV';frame.allow='autoplay; encrypted-media; picture-in-picture; fullscreen';frame.allowFullscreen=true;frame.referrerPolicy='strict-origin-when-cross-origin';$('#player-slot').replaceChildren(frame);$('#music-start').setAttribute('aria-expanded','true');$('#music-close').focus()}else $('#music-close').focus()};
-$('#music-start').setAttribute('aria-controls','music-panel');$('#music-start').setAttribute('aria-expanded','false');
-$('#music-close').onclick=()=>{$('#player-slot').replaceChildren();$('#music-panel').hidden=true;$('#music-start').setAttribute('aria-expanded','false');$('#music-start').focus()};
+initMusic();
 // All text and policy interactions remain available if WebGL is unavailable.
-import('./scene.js?v=20261028-13').catch(err=>{console.error('Scene unavailable',err);$('#scene-loading').innerHTML='這個裝置暫時無法開啟 3D<span>你仍可瀏覽下方城市故事與播放 MV</span>';document.querySelectorAll('.scene-tools button:not(#fullscreen),.stage-actions button,[data-character]').forEach(b=>b.disabled=true)});
+import('./scene.js?v=20261028-14').catch(err=>{console.error('Scene unavailable',err);$('#scene-loading').innerHTML='這個裝置暫時無法開啟 3D<span>你仍可瀏覽下方城市故事與播放 MV</span>';document.querySelectorAll('.scene-tools button:not(#fullscreen),.stage-actions button:not(#music-toggle),[data-character]').forEach(b=>b.disabled=true)});
