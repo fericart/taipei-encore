@@ -54,7 +54,8 @@ export function createCinematic(THREE,world,chars,{group,box,voxelBox,segment,fi
   }return visible;
  }
  const safetySphere=new THREE.Sphere(new THREE.Vector3(),12),fireRay=new THREE.Ray(),mouthWorld=new THREE.Vector3(),directionWorld=new THREE.Vector3(),intersection=new THREE.Vector3(),closest=new THREE.Vector3();
- const state={clearance:0,phase:0,act:'開場',breath:0,spiders:0,gripError:0};
+ const arcOrigin=new THREE.Vector3(),arcTarget=new THREE.Vector3(),arcDirection=new THREE.Vector3(),forward=new THREE.Vector3(0,0,1),inverseBody=new THREE.Quaternion(),aimRotation=new THREE.Quaternion();
+ const state={clearance:0,phase:0,act:'開場',breath:0,spiders:0,gripError:0,breathTip:[0,0,0],sweepProgress:0};
  function update(t){
   const p=t%30,k=envelope(p,1.5,9),g=envelope(p,10,18.5),fire=envelope(p,11.6,17.9,.5);state.phase=p;
   anchorBody(kong,ku.outwardLean+Math.sin(t*.7)*.018+k*Math.sin((p-2)*tau*2)*.015);
@@ -62,19 +63,22 @@ export function createCinematic(THREE,world,chars,{group,box,voxelBox,segment,fi
   ku.neck.rotation.x=THREE.MathUtils.lerp(ku.neck.rotation.x,-.40+Math.sin(t*12)*.035,k);ku.neck.rotation.y*=1-k;ku.neck.rotation.z*=1-k;
   pound.visible=k>.05;ku.cheer.visible=!pound.visible;
   if(pound.visible){const beat=((p-1.5)*2.25)%1,recoil=beat<.22?1-beat/.22:(beat-.22)/.78;hand.set(.07,2.42,1.36+.95*smooth(0,1,recoil));elbow.set(-1.15,2.15,1.0+recoil*.32);fitBone(upper,shoulder,elbow);fitBone(fore,elbow,hand);knuckles.position.copy(hand);knuckles.rotation.y=-.22;}
-  gu.neck.rotation.x=THREE.MathUtils.lerp(gu.neck.rotation.x,THREE.MathUtils.lerp(-.76,.40,smooth(11.6,17.9,p)),g);gu.neck.rotation.y=THREE.MathUtils.lerp(gu.neck.rotation.y,-2.2,g);gu.neck.rotation.z*=1-g;
+  // Aim along the user's right-side arc: high right, out to the side, then low right.
+  state.sweepProgress=smooth(11.6,17.9,p);const arcAngle=THREE.MathUtils.lerp(1.15,-1.43,state.sweepProgress);
+  gu.neck.getWorldPosition(arcOrigin);arcTarget.set(arcOrigin.x+Math.cos(arcAngle)*27,Math.max(-22,arcOrigin.y+Math.sin(arcAngle)*31),arcOrigin.z+18);
+  godzilla.getWorldQuaternion(inverseBody).invert();arcDirection.copy(arcTarget).sub(arcOrigin).normalize().applyQuaternion(inverseBody);aimRotation.setFromUnitVectors(forward,arcDirection);gu.neck.quaternion.slerp(aimRotation,g);
   charge.intensity=g*(9+Math.sin(t*13)*2);breath.visible=fire>.005;state.breath=fire;throat.intensity=fire*16;
   if(breath.visible){
-   // Sweep toward the left rear, then cap its length before the mayor's full-body safety sphere.
+   // Keep the visible endpoint on the outside arc and retain the full-body safety bound.
    breath.scale.set(1,1,1);breath.updateWorldMatrix(true,false);chars[0].updateWorldMatrix(true,false);safetySphere.center.set(0,2.3,.1);chars[0].localToWorld(safetySphere.center);breath.getWorldPosition(mouthWorld);breath.getWorldDirection(directionWorld);fireRay.set(mouthWorld,directionWorld);
-   const fullLength=7.2*godzilla.scale.z;let allowed=fullLength*(.5+fire*.5);
+   const fullLength=7.2*godzilla.scale.z;let allowed=Math.min(fullLength,mouthWorld.distanceTo(arcTarget))*(.5+fire*.5);
    if(safetySphere.containsPoint(mouthWorld))allowed=0;else if(fireRay.intersectSphere(safetySphere,intersection))allowed=Math.min(allowed,Math.max(0,mouthWorld.distanceTo(intersection)-.7));
-   breath.scale.z=allowed/fullLength;breath.visible=allowed>.1;
+   breath.scale.z=allowed/fullLength;breath.visible=allowed>.1;state.breathTip=mouthWorld.clone().addScaledVector(directionWorld,allowed).toArray();
    const projected=THREE.MathUtils.clamp(safetySphere.center.clone().sub(mouthWorld).dot(directionWorld),0,allowed);closest.copy(mouthWorld).addScaledVector(directionWorld,projected);state.clearance=closest.distanceTo(safetySphere.center)-safetySphere.radius;
    for(const {mesh,opacity}of layers){mesh.material.opacity=opacity*fire*(.9+Math.sin(t*23)*.1);mesh.scale.x=mesh.scale.z=1+Math.sin(t*21)*.05;}
    for(let i=0;i<90;i++){const f=(i/90+t*1.9)%1,a=i*2.399+t*7,r=(.08+f*.48)*(i%3===0?.9:.55);temp.position.set(Math.cos(a)*r,Math.sin(a)*r,f*7.1);temp.rotation.set(t+i,i*.7,t*2);const size=(.06+f*.11)*(1-f*.55);temp.scale.set(size,size,size*(2+f*2));temp.updateMatrix();sparks.setMatrixAt(i,temp.matrix)}sparks.instanceMatrix.needsUpdate=true;
   }
-  state.spiders=updateSpiders(p,t);state.act=k>.05?'金剛抬頭捶胸':g>.05?'哥吉拉左後方俯掃藍焰':state.spiders?'蜘蛛人射絲飛躍':'城市歡呼';
+  state.spiders=updateSpiders(p,t);state.act=k>.05?'金剛抬頭捶胸':g>.05?'哥吉拉右側弧形掃射':state.spiders?'蜘蛛人射絲飛躍':'城市歡呼';
   let error=0;for(const c of[kong,godzilla]){c.updateWorldMatrix(true,false);scratch.copy(c.userData.gripLocal);c.localToWorld(scratch);error=Math.max(error,scratch.distanceTo(c.userData.gripAnchor))}state.gripError=error;
   return state;
  }
