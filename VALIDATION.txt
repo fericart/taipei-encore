@@ -53,3 +53,13 @@ Sixth-edition validation: JavaScript syntax and Git whitespace checks passed. qa
 Retained sixth-edition QA observations: the browser selector waiter returned its short deadline before the first flight capture; a later actual flight was captured and inspected. The original straight-on frame showed the character from behind at this lap phase, so camera rotation and zoom-out were used to inspect the full side silhouette. No device or Safari certification is claimed.
 
 Sixth-edition return check: at active time 227.34 the browser reported flight false, and the actual scene showed the mayor back in the centre with idle expressive arms and bent idle legs restored.
+
+2026-10-28 seventh edition: expressive hands now have half-length fingers and thumbs, broader padded proportions and stepped voxel tips; the rock gesture uses the same short-finger styling. The open palm still reads as five fingers. Functional flight fists, chest-pounding fists and tower grips retain their poses.
+
+Electric-blue mode now sends repeated radial crowd waves outward from 101 across both streets and rooftops. Each spectator's body, arms, hands and glow stick share one spatial phase, so rows lift their arms and hop as the wave reaches them. The GPU animation blends in/out with the lighting mode and combines with encore's beat accents. Pause and hidden-page handling share the existing active clock. Current population: 2,801, including 1,222 roof spectators.
+
+Seventh-edition validation: scene.js/app.js syntax and Git whitespace checks pass. Actual desktop WebGL inspected for short open hands and short rock fingers. Electric-blue mode reported stadiumWave 1.00 and rendered staggered arm raises and hops on street and rooftop crowds. Encore and the wave operated together; pause held time 74.52, wave 1.00 and encore 1.00 across two settled reads. Desktop console error query returned none. Actual 360px iframe rendered, its electric-blue button operated, and the QA page reported overflow false and a 16.7 ms sampled frame interval on this Mac. No physical-phone or Safari certification is claimed.
+
+Retained seventh-edition QA limits: the initial sandboxed local preview bind was denied, then the authorized loopback server started successfully. A browser read-only iframe-content query was unavailable; the iframe's visible QA status and actual render were used instead. Temporary QA HTML was removed from production assets before publication.
+
+Seventh-edition mode-off check: active time 108.82 showed crowdMode 自由歡呼, stadiumWave 0.00 and encore 0.00 after switching both modes off.

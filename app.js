@@ -41,4 +41,4 @@ $('#music-start').onclick=()=>{const panel=$('#music-panel');if(panel.hidden){pa
 $('#music-start').setAttribute('aria-controls','music-panel');$('#music-start').setAttribute('aria-expanded','false');
 $('#music-close').onclick=()=>{$('#player-slot').replaceChildren();$('#music-panel').hidden=true;$('#music-start').setAttribute('aria-expanded','false');$('#music-start').focus()};
 // All text and policy interactions remain available if WebGL is unavailable.
-import('./scene.js?v=20261028-7').catch(err=>{console.error('Scene unavailable',err);$('#scene-loading').innerHTML='這個裝置暫時無法開啟 3D<span>你仍可瀏覽下方城市故事與播放 MV</span>';document.querySelectorAll('.scene-tools button,.stage-actions button,[data-character]').forEach(b=>b.disabled=true)});
+import('./scene.js?v=20261028-8').catch(err=>{console.error('Scene unavailable',err);$('#scene-loading').innerHTML='這個裝置暫時無法開啟 3D<span>你仍可瀏覽下方城市故事與播放 MV</span>';document.querySelectorAll('.scene-tools button,.stage-actions button,[data-character]').forEach(b=>b.disabled=true)});
