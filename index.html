@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f8f2">
+  <title>台北安可｜101 雲端舞台</title>
+  <meta name="description" content="巨獸級台北安可！蔣萬安、大金剛、哥吉拉環抱台北101，在霓虹城市裡歡呼，煙火持續綻放。粉絲創作，非官方網站。">
+  <meta property="og:title" content="台北安可｜101 雲端舞台"><meta property="og:description" content="轉個視角，點亮煙火，讓台北成為你的舞台。粉絲創作，非官方網站。">
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="./style.css?v=20261028-5">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要內容</a>
+  <header class="site-header">
+    <a class="brand" href="#" aria-label="台北安可首頁"><span class="brand-cube">▧</span><span>台北安可<small>TAIPEI ENCORE</small></span></a>
+    <nav aria-label="主導覽"><a href="#stage" class="active">雲端舞台</a><a href="#stories">城市故事</a><button class="text-button" data-open="sources">關於與來源 <span>↗</span></button></nav>
+    <button class="outline-button" data-open="share"><span>↗</span> 分享舞台</button>
+  </header>
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-heading"><div><p class="eyebrow"><span></span> BIG CITY. BIGGER ENCORE.</p><h1 id="hero-title">台北安可，<em>巨獸級開場。</em></h1></div><p class="hero-caption">抱緊 101，把快樂開到最大聲。<br>霓虹不熄，煙火不停。今晚，整座城市都是派對。</p></div>
+      <div id="stage" class="stage-wrap">
+        <div id="scene" tabindex="0" role="application" aria-label="互動3D舞台。拖曳旋轉，滾輪縮放；鍵盤左右鍵旋轉，上下鍵縮放，R重設。點擊建築看板閱讀政策來源，也可使用下方控制按鈕。"></div>
+        <div class="scene-heading"><span class="live-badge"><i></i> 101 · MONSTER PARTY</span><h2>抱緊台北，<br>大聲安可！</h2><p id="show-cue">巨獸與蜘蛛人登場 · 每30秒循環</p></div>
+        <div class="scene-meta"><span class="pixel-star">✦</span><span id="time-label">霓虹派對</span><span class="meta-divider"></span><span>25.0340° N · 121.5645° E</span></div>
+        <div class="scene-tools" aria-label="視角工具"><button id="zoom-in" aria-label="拉近視角" title="拉近">＋</button><button id="zoom-out" aria-label="拉遠視角" title="拉遠">−</button><button id="reset-view" aria-label="重設視角" title="重設視角">⌖</button><button id="motion" aria-label="暫停動畫" aria-pressed="false" title="暫停動畫">Ⅱ</button></div>
+        <div id="character-bubble" class="character-bubble" role="status" hidden></div>
+        <div class="scene-bottom"><span class="drag-hint">↔ 拖曳環繞 · 點樓面看板看政策來源</span><div class="stage-actions"><button id="fireworks"><span>✷</span> 巨型煙火</button><button id="time-toggle"><span>◒</span> 電光藍調</button><button id="dance" aria-pressed="false"><span>♫</span> 全場安可</button></div><span class="scene-footnote">巨獸秀每30秒循環 · 虛構粉絲世界</span></div>
+        <div id="scene-loading" class="scene-loading">正在搭起你的舞台<span>BUILDING A LITTLE TAIPEI…</span></div>
+      </div>
+      <div class="stage-strip"><div class="lineup"><span class="strip-label">今晚的巨星</span><button data-character="0"><i class="avatar mayor">▥</i> 蔣萬安</button><span>×</span><button data-character="1"><i class="avatar kong">▥</i> 大金剛</button><span>×</span><button data-character="2"><i class="avatar godzilla">▥</i> 哥吉拉</button></div><button id="music-start" class="music-button"><span class="play-icon">▶</span><span>播放〈台北安可〉<small>官方 MV · YouTube</small></span><span class="music-bars">▂ ▅ ▃ ▆</span></button></div>
+      <details class="billboard-sources"><summary>霓虹看板 · 政策與來源 ↗</summary><div><button data-story="ai-city">AI園區構想</button><button data-story="ai-education">AI教育規劃</button><button data-story="senior-next">敬老通路2027</button><button data-story="transit">1,200交通月票</button><button data-story="senior">敬老卡600點</button><button data-story="dome">大巨蛋啟用</button><button data-landmark="tmc">北流音樂地標</button></div></details>
+    </section>
+    <section class="stories" id="stories" aria-labelledby="stories-title">
+      <div class="section-top"><div><p class="eyebrow">THE CITY BEHIND THE STAGE</p><h2 id="stories-title">每一格台北，都有故事。</h2></div><p>從城市的改變，到下一步的想像。<br>點開方塊，看看舞台背後的台北。</p></div>
+      <div class="story-navigation"><div role="tablist" aria-label="城市故事分類"><button id="past-tab" role="tab" aria-selected="true" aria-controls="story-grid" data-filter="past">四年足跡 <span>03</span></button><button id="future-tab" role="tab" aria-selected="false" aria-controls="story-grid" data-filter="future" tabindex="-1">未來提案 <span>03</span></button></div><span>市府公開資料摘錄 <span class="source-dot"></span></span></div>
+      <p id="future-note" class="research-note" hidden>關於「黃金十年」：截至 2026.10.28，本次查核未找到以此名稱發布的蔣萬安正式政見原文。以下展示可查證的「AI黃金世紀」等市府提案；提案不等於已完成建設。</p>
+      <div id="story-grid" class="story-grid" role="tabpanel" aria-labelledby="past-tab"></div>
+      <p class="data-note">資料範圍：2022.12–2026.10 任內精選；查核日期：2026.10.28。內容依市府新聞稿摘述，並非完整政績評比。</p>
+    </section>
+    <section class="encore-note"><span class="note-star">✳</span><div><p class="eyebrow">A LITTLE IMAGINATION, A LOT OF TAIPEI.</p><h2>這座城市的安可，也有你的聲音。</h2><p>轉個視角、放朵煙火，把這座雲端舞台分享出去。</p></div><button class="dark-button" data-open="share">帶走你的舞台 <span>↗</span></button></section>
+  </main>
+  <footer><div><a class="footer-logo" href="#">台北安可 <span>TAIPEI ENCORE</span></a><p>粉絲創作，非官方網站</p></div><p>人物與怪獸同台為虛構粉絲創作，不代表本人或權利人參與、授權或背書。<br>原創 3D 幾何模型 · 系統字型 · YouTube 官方播放器</p><button class="text-button" data-open="sources">資料與素材來源 ↗</button></footer>
+  <aside id="music-panel" class="music-panel" aria-label="YouTube音樂播放器" hidden><div class="music-panel-head"><span>♫ 台北安可 · 官方 MV</span><button id="music-close" aria-label="關閉播放器並停止音樂">✕</button></div><div id="player-slot"></div><p>若未自動播放，請點影片播放鍵。<a href="https://www.youtube.com/watch?v=uKCiYJdv6Zg" target="_blank" rel="noopener noreferrer">在 YouTube 開啟 ↗</a></p></aside>
+  <dialog id="content-dialog"><div class="dialog-top"><span id="dialog-kicker" class="eyebrow"></span><button id="dialog-close" aria-label="關閉對話框">✕</button></div><div id="dialog-body"></div></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <noscript><p class="research-note">開啟 JavaScript 即可探索 3D 舞台。市政資料請見 <a href="https://www.gov.taipei/" target="_blank" rel="noopener noreferrer">臺北市政府</a>；音樂請見 <a href="https://www.youtube.com/watch?v=uKCiYJdv6Zg">YouTube 官方 MV</a>。</p></noscript>
+  <script type="module" src="./app.js?v=20261028-5"></script>
+</body></html>
