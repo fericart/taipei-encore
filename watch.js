@@ -15,7 +15,7 @@ export function createFlightWatch(THREE,chars){
    }
    u.head.updateWorldMatrix(true,false);local.copy(target);u.head.worldToLocal(local);
    const dx=THREE.MathUtils.clamp(local.x/Math.max(1,Math.abs(local.z)),-1,1)*.065*a,dy=THREE.MathUtils.clamp(local.y/Math.max(1,Math.abs(local.z)),-1,1)*.030*a;
-   for(const eye of u.head.userData.eyes||[]){eye.position.copy(eye.userData.rest);eye.position.x+=dx;eye.position.y+=dy;}
+   for(const eye of u.head.userData.eyes||[]){eye.position.copy(eye.userData.rest);const limit=eye.userData.gazeLimit||[.065,.030];eye.position.x+=THREE.MathUtils.clamp(dx,-limit[0],limit[0]);eye.position.y+=THREE.MathUtils.clamp(dy,-limit[1],limit[1]);}
    state.shifts.push([dx,dy]);
   }
   return state;

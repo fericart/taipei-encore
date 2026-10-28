@@ -33,6 +33,7 @@ export function createLowPolyKit(THREE) {
   const crystal=new THREE.ConeGeometry(.5,1,5,1).toNonIndexed();
   const plateShape=new THREE.Shape();[[0,-.48],[-.34,-.27],[-.30,.06],[-.49,.30],[-.19,.23],[0,.59],[.18,.29],[.45,.38],[.30,.02],[.39,-.26]].forEach(([x,y],i)=>i?plateShape.lineTo(x,y):plateShape.moveTo(x,y));plateShape.closePath();
   const dorsal=new THREE.ExtrudeGeometry(plateShape,{depth:.16,bevelEnabled:true,bevelSegments:1,steps:1,bevelSize:.055,bevelThickness:.055,curveSegments:1});dorsal.translate(0,0,-.08);
+  for(const geo of[crystal,dorsal])geo.setAttribute('color',new THREE.Float32BufferAttribute(Array(geo.attributes.position.count*3).fill(1),3));
   const materials=new Map();
   function material(color,glow=0,metalness=.02) {
     const key=`${color}/${glow}/${metalness}`;

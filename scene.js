@@ -1,11 +1,13 @@
 import * as THREE from './assets/three.module.min.js';
-import {createLowPolyKit} from './lowpoly.js?v=20261028-11';
+import {createLowPolyKit} from './lowpoly.js?v=20261028-12';
 const art=createLowPolyKit(THREE);
-import {createCinematic} from './cinematic.js?v=20261028-11';
-import {createParty,reservedPartySpace} from './party.js?v=20261028-11';
-import {createMayorFlight} from './flight.js?v=20261028-11';
-import {createFlightWatch} from './watch.js?v=20261028-11';
-import {policyTexture} from './billboards.js?v=20261028-11';
+import {createCharacterPortraits} from './portraits.js?v=20261028-12';
+const portraits=createCharacterPortraits(THREE,art);
+import {createCinematic} from './cinematic.js?v=20261028-12';
+import {createParty,reservedPartySpace} from './party.js?v=20261028-12';
+import {createMayorFlight} from './flight.js?v=20261028-12';
+import {createFlightWatch} from './watch.js?v=20261028-12';
+import {policyTexture} from './billboards.js?v=20261028-12';
 const $=s=>document.querySelector(s),host=$('#scene');
 const scene=new THREE.Scene();scene.background=new THREE.Color('#09051d');scene.fog=new THREE.FogExp2('#100725',.009);
 const camera=new THREE.PerspectiveCamera(46,1,.2,260);
@@ -32,7 +34,7 @@ const signs=[];function sign(parent,x,y,z,w,h,title,sub,color,rot=0){const mesh=
 sign(tower,0,13.4,2.54,4.8,2.4,'101','TAIPEI','#bafffb');
 // Shared faceted solids give the characters sculpted silhouettes and clean planar lighting.
 const chars=[],gestureHands=[];
-const palette={skin:['#efbc93'],hair:['#282032'],shirt:['#f1edff'],fur:['#99572c'],tan:['#e3b77c'],scale:['#298f78'],belly:['#94d1a1']};
+const palette={skin:['#efbc93'],hair:['#282032'],shirt:['#f1edff'],fur:['#584236'],tan:['#847265'],scale:['#324e4d'],belly:['#65786b']};
 function shade(colors){return Array.isArray(colors)?colors[Math.floor(rand()*colors.length)]:colors}
 function voxelBox(parent,x,y,z,w,h,d,colors,step=.145){solid(parent,x,y,z,w,h,d,shade(colors),0,'soft')}
 function oval(parent,x,y,z,rx,ry,rz,colors,step=.15){solid(parent,x,y,z,rx*2,ry*2,rz*2,shade(colors),0,'oval')}
@@ -44,35 +46,12 @@ function cartoonFinger(parent,a,b,width,depth,colors,tipColor){const start=new T
 function openHand(parent,p,size,colors,claws=false){voxelBox(parent,p[0],p[1],p[2],size,size*.82,size*.49,colors,.085);const lengths=[.82,1.08,1.18,.91];for(let i=0;i<4;i++){const x=(i-1.5)*size*.255,spread=(i-1.5)*size*.08,h=(lengths[i]+.12)*size*.5,a=[p[0]+x,p[1]+size*.28,p[2]],b=[p[0]+x+spread,p[1]+size*.28+h,p[2]-.01];cartoonFinger(parent,a,b,size*.245,size*.27,colors,claws?'#e3ead1':null)}cartoonFinger(parent,[p[0]-size*.42,p[1]-size*.13,p[2]],[p[0]-size*.68,p[1]+size*.165,p[2]+size*.03],size*.28,size*.28,colors);}
 function rockHand(parent,p,size,colors,claws=false){voxelBox(parent,p[0],p[1],p[2],size,size*.78,size*.62,colors,.09);for(const side of[-1,1]){const x=p[0]+side*size*.36,h=size*(side<0?.44:.365);cartoonFinger(parent,[x,p[1]+size*.35,p[2]-.02],[x,p[1]+size*.35+h,p[2]-.02],size*.27,size*.28,colors,claws?'#e3ead1':null)}
 for(const side of[-1,1])box(parent,p[0]+side*size*.13,p[1]+size*.12,p[2]+size*.35,size*.25,size*.29,size*.24,shade(colors));segment(parent,[p[0]-size*.46,p[1]-.13,p[2]+size*.28],[p[0]+size*.14,p[1]-.06,p[2]+size*.45],size*.2,size*.2,colors)}
-host.dataset.handStyle='短圓低多邊形手掌';host.dataset.artStyle='精雕低多邊形';
-function happyFace(g,y,w,kind){
- const z=kind==='kong'?1.03:kind==='godzilla'?1.19:.535,skin=kind==='godzilla'?'#398c77':kind==='kong'?'#d9aa76':'#f1bf98';
- for(const side of[-1,1]){
-  const x=side*w*.245,ew=kind==='mayor'?.31:.34,eh=kind==='mayor'?.285:.24;
-  oval(g,x,y+.205,z,ew*.56,eh*.59,.045,'#564034');
-  oval(g,x,y+.205,z+.026,ew*.51,eh*.53,.045,'#fff9ec');
-  const eye=group(g,x,y+.205,z+.077),iris=kind==='godzilla'?'#edb958':kind==='kong'?'#764521':'#654638';
-  oval(eye,0,0,0,.073,eh*.45,.026,iris);oval(eye,0,.003,.021,.042,eh*.36,.018,'#171b24');
-  oval(eye,-.026,.057,.039,.025,.028,.009,'#ffffff');oval(eye,.026,-.035,.037,.010,.012,.007,'#ffe7b3');
-  eye.userData.rest=eye.position.clone();(g.userData.eyes??=[]).push(eye);
-  const brow=group(g,x,y+eh*.80+.13,z+.025);brow.rotation.z=-side*.10;
-  voxelBox(brow,0,0,0,ew*1.1,.074,.10,kind==='godzilla'?'#236656':'#342d2c');
-  oval(g,side*w*.34,y-.06,z-.005,.11,.065,.025,kind==='godzilla'?'#67a68a':'#e7a38a');
- }
- const mw=w*(kind==='kong'?.62:kind==='godzilla'?.66:.55),mh=kind==='godzilla'?.43:.33;
- art.polygon(g,[[-mw*.51,y-.08],[-mw*.30,y-.11],[0,y-.12],[mw*.30,y-.11],[mw*.51,y-.08],[mw*.46,y-.08-mh*.65],[mw*.25,y-.08-mh],[0,y-.10-mh],[-mw*.25,y-.08-mh],[-mw*.46,y-.08-mh*.65]],z+.038,.045,'#472737');
- for(let i=0;i<6;i++)voxelBox(g,(i-2.5)*mw*.14,y-.145+Math.abs(i-2.5)*.009,z+.103,mw*.143,.078,.035,'#fff9e7');
- oval(g,0,y-.08-mh*.78,z+.104,mw*.22,.047,.018,'#f28a9e');
- if(kind==='godzilla')for(const side of[-1,1])for(const xx of[.22,.43])art.mesh(g,art.crystal,side*xx,y-.24,z+.13,.105,.16,.10,'#fff7d9',[0,0,Math.PI]);
-}
+host.dataset.handStyle='短圓低多邊形手掌';host.dataset.artStyle='成熟人物・巨獸原型';
 const heroUniforms={heroTime:{value:0},heroFlight:{value:0}};
 function heroBadge(){const c=document.createElement('canvas');c.width=c.height=512;const ctx=c.getContext('2d');ctx.fillStyle='#ef3032';ctx.beginPath();ctx.arc(256,256,247,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fffdf9';ctx.beginPath();ctx.arc(256,256,214,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ef3032';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='900 390px Arial,sans-serif';ctx.fillText('5',256,282);const tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;return new THREE.Mesh(new THREE.PlaneGeometry(1.12,1.12),new THREE.MeshBasicMaterial({map:tx,transparent:true}))}
 function flyingCape(parent){const geo=new THREE.PlaneGeometry(1,1,10,14),pos=geo.attributes.position,uv=geo.attributes.uv;for(let i=0;i<pos.count;i++){const u=uv.getX(i),v=1-uv.getY(i);pos.setXYZ(i,(u-.5)*(1.28+v*1.7)-v*.22,2.98-v*3.15,-.48-v*.26-Math.sin(u*Math.PI)*v*.13)}geo.computeVertexNormals();const m=new THREE.MeshStandardMaterial({color:'#e92c43',emissive:'#b91533',emissiveIntensity:.12,roughness:.7,side:THREE.DoubleSide,flatShading:true});m.onBeforeCompile=shader=>{Object.assign(shader.uniforms,heroUniforms);shader.vertexShader='uniform float heroTime; uniform float heroFlight;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`vec3 transformed=vec3(position);float trailing=1.0-uv.y;transformed.y-=heroFlight*trailing*.9;transformed.z-=heroFlight*sin(trailing*3.14159)*.28;transformed.x+=sin(heroTime*2.2+trailing*5.5)*.22*trailing;transformed.z+=sin(heroTime*3.4+trailing*8.0+uv.x*5.0)*.34*pow(trailing,1.2);transformed.y+=sin(heroTime*2.7+uv.x*6.0)*.15*trailing;`)};m.customProgramCacheKey=()=> 'flowing-hero-cape-v2';const mesh=new THREE.Mesh(geo,m);mesh.frustumCulled=false;mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh}
-function mayor(){const g=group(world,0,-7.8,10.2);g.scale.setScalar(5);const blue=['#176cdb'],red=['#e72f46'];art.mesh(g,art.torso,0,2.18,0,1.25,1.65,.78,'#176cdb');voxelBox(g,0,1.39,0,1.16,.18,.78,['#f4c74a'],.085);box(g,0,1.39,.43,.29,.18,.1,'#ffde70');voxelBox(g,0,1.18,0,1.04,.3,.7,red,.1);const badge=heroBadge();badge.position.set(0,2.25,.415);g.add(badge);g.badge=badge;flyingCape(g);for(const side of[-1,1])box(g,side*.45,2.98,-.12,.29,.13,.65,'#f04751');
-const head=group(g,0,3.52,0);art.mesh(head,art.head,0,0,0,1.25,1.14,1.02,'#f1bf98');
-for(const side of[-1,1]){oval(head,side*.635,-.02,0,.115,.17,.12,'#efb68f');oval(head,side*.669,-.02,.078,.058,.10,.045,'#d99579')}
-art.hair(head);happyFace(head,0,1.18,'mayor');
-art.polygon(head,[[-.065,.09],[.035,.09],[.09,-.035],[.02,-.07],[-.06,-.035]],.57,.095,'#e2a87f');
+function mayor(){const g=group(world,0,-7.8,10.2);g.scale.setScalar(5);const blue=['#176cdb'],red=['#e72f46'];art.mesh(g,art.torso,0,2.18,0,1.42,1.65,.78,'#176cdb');voxelBox(g,0,1.39,0,1.16,.18,.78,['#f4c74a'],.085);box(g,0,1.39,.43,.29,.18,.1,'#ffde70');voxelBox(g,0,1.18,0,1.04,.3,.7,red,.1);const badge=heroBadge();badge.position.set(0,2.25,.415);g.add(badge);g.badge=badge;flyingCape(g);for(const side of[-1,1])box(g,side*.45,2.98,-.12,.29,.13,.65,'#f04751');
+const head=group(g,0,3.69,0);portraits.mayor(head);
 // Tailored layers, faceted shoulders, collar and boot cuffs stay on the animated rig.
 for(const side of[-1,1]){
  art.mesh(g,art.soft,side*.52,2.80,.02,.40,.43,.76,'#207be4',[0,0,-side*.20]);
@@ -88,21 +67,22 @@ arm(flightLimbs,[-.70,2.85,0],[-.59,3.90,.01],[-.49,4.98,.02],blue,palette.skin,
 arm(flightLimbs,[.70,2.77,0],[.94,2.03,-.11],[.83,1.45,-.08],blue,palette.skin,.40);
 for(const side of[-1,1]){const hip=side*.31,knee=side*.34,ankle=side*.39,offset=side>0?.12:0;segment(flightLimbs,[hip,1.18,0],[knee,.22+offset,-.04],.43,.51,blue);segment(flightLimbs,[knee,.22+offset,-.04],[ankle,-.72+offset,-.09],.44,.52,red);voxelBox(flightLimbs,ankle,-.86+offset,-.07,.46,.36,.58,red,.09);voxelBox(flightLimbs,ankle,-1.01+offset,-.07,.48,.08,.61,'#a92945');}
 g.rotation.z=-.07;g.rotation.x=-.06;g.userData={name:'蔣萬安',message:'ROCK ON！披上紅斗篷，朝台北的夜空飛起來！',base:-7.8,head,cheer,hold,idleLegs,flightLimbs,kind:'mayor'};return g}
-function kong(){const g=group(world,-10,1.5,-.3);g.scale.setScalar(4.15);oval(g,0,2.1,0,1.13,1.35,.78,palette.fur,.15);oval(g,0,2.1,.69,.8,1.03,.2,palette.tan,.13);for(const s of[-1,1])oval(g,s*.82,2.8,0,.5,.65,.63,palette.fur,.14);
-const head=group(g,0,3.65,.1);oval(head,0,0,0,.91,.88,.78,palette.fur,.13);art.mesh(head,art.head,0,-.06,.77,1.52,1.14,.48,'#dfb17b');for(const s of[-1,1]){oval(head,s*.88,.12,.03,.19,.29,.25,palette.tan,.09);box(head,s*.9,.12,.28,.12,.25,.05,'#a66942');for(let i=0;i<4;i++)box(head,s*(.53+i*.055),-.49-i*.08,.48,.18,.17,.28,shade(palette.fur))}
-for(let i=0;i<4;i++)voxelBox(head,-.2+i*.13,.84+Math.sin(i*.7)*.16,-.1,.16,.25,.48,palette.fur,.09);happyFace(head,.1,1.47,'kong');voxelBox(head,0,.09,1.13,.43,.18,.18,['#925a36','#aa7046'],.08);for(const x of[-.11,.11])box(head,x,.1,1.23,.075,.06,.03,'#4a2b24');
+function kong(){const g=group(world,-10,1.5,-.3);g.scale.setScalar(4.15);art.mesh(g,art.torso,0,2.1,0,2.38,2.65,1.60,'#584236');art.mesh(g,art.torso,0,2.12,.69,1.60,1.95,.32,'#786454');for(const s of[-1,1])oval(g,s*.39,2.54,.75,.43,.32,.18,'#806b59');for(const s of[-1,1])oval(g,s*.82,2.8,0,.5,.65,.63,palette.fur,.14);
+const head=group(g,0,3.65,.1);portraits.kong(head);
 voxelBox(g,0,2.94,.93,.66,.25,.17,['#f42e67','#e52d58'],.10);art.polygon(g,[[-.19,2.78],[.19,2.78],[.26,2.06],[0,1.86],[-.26,2.06]],.91,.14,'#dd3654');box(g,0,2.35,1.05,.18,.21,.04,'#ffdc4d');
 segment(g,[-.6,1.2,0],[-.8,.58,.12],.78,.82,palette.fur);fist(g,[-.8,.22,.4],.78,palette.tan);segment(g,[.65,1.23,0],[1.26,1.35,.18],.72,.8,palette.fur);segment(g,[1.26,1.35,.18],[1.49,.97,.5],.64,.68,palette.fur);fist(g,[1.53,.87,.64],.65,palette.tan);
-const hold=arm(g,[1.02,2.9,0],[1.55,3.43,-.18],[2.02,3.55,-.25],palette.fur,palette.tan,.73);for(let i=0;i<4;i++)box(hold,2.22,3.35+i*.17,-.48,.37,.14,.26,shade(palette.tan));const cheer=group(g,-1.1,2.85,.05);arm(cheer,[0,0,0],[-.72,-.25,.45],[-.12,-.6,1.03],palette.fur,palette.tan,.82,true);for(const side of[-1,1])for(let j=0;j<5;j++){art.mesh(head,art.crystal,side*(.66+j*.04),-.03-j*.15,.35,.30,.52,.48,j%2?'#854b29':'#a46436',[0,0,side*.35+Math.PI]);art.mesh(g,art.crystal,side*(.94+j*.025),2.92-j*.16,.13,.42,.65,.64,j%2?'#8b512f':'#a96c3b',[.1,0,side*.35+Math.PI]);}
+const hold=arm(g,[1.02,2.9,0],[1.55,3.43,-.18],[2.02,3.55,-.25],palette.fur,palette.tan,.73);for(let i=0;i<4;i++)box(hold,2.22,3.35+i*.17,-.48,.37,.14,.26,shade(palette.tan));const cheer=group(g,-1.1,2.85,.05);arm(cheer,[0,0,0],[-.72,-.25,.45],[-.12,-.6,1.03],palette.fur,palette.tan,.82,true);for(const side of[-1,1])for(let j=0;j<5;j++){art.mesh(head,art.crystal,side*(.66+j*.04),-.03-j*.15,.35,.30,.52,.48,j%2?'#4d392f':'#65503e',[0,0,side*.35+Math.PI]);art.mesh(g,art.crystal,side*(.94+j*.025),2.92-j*.16,.13,.42,.65,.64,j%2?'#4c382e':'#65503e',[.1,0,side*.35+Math.PI]);}
 g.userData={name:'大金剛',message:'吼吼！左上攀樓、捶胸應援！整座台北一起歡呼！',base:1.5,head,cheer,hold,kind:'kong'};return g}
-function spine(parent,x,y,z,w,h,d){art.mesh(parent,art.dorsal,x,y+h*.20,z,w*1.45,h*1.4,d*1.7,'#65d8d5',[.16,0,0],.33)}
-function godzilla(){const g=group(world,10.2,-20.5,.5);g.scale.setScalar(4.9);oval(g,0,2,0,.96,1.47,.86,palette.scale,.145);oval(g,0,1.9,.79,.65,1.12,.22,palette.belly,.13);for(let i=0;i<7;i++)voxelBox(g,0,1.18+i*.25,.91,.98-Math.abs(i-3)*.08,.20,.24,i%2?'#a5cca5':'#95be99');
-const head=group(g,0,3.8,0);art.mesh(head,art.head,0,.08,0,1.43,1.34,1.3,'#338b75');art.mesh(head,art.soft,0,-.12,.65,1.53,.87,1.1,'#3c987f');voxelBox(head,0,-.55,.77,1.35,.24,1.12,palette.belly,.11);happyFace(head,.09,1.45,'godzilla');for(const s of[-1,1]){for(let i=0;i<3;i++)box(head,s*.52,.57+i*.055,.35-i*.1,.42-i*.07,.12,.5,shade(palette.scale));box(head,s*.4,.25,1.21,.1,.055,.035,'#125547')}
-for(let side of[-1,1])for(let row=0;row<7;row++)for(let col=0;col<2;col++)art.mesh(g,art.soft,side*(.74+col*.1),1.25+row*.26,.45-col*.22,.20,.21,.11,'#3d9d83',[0,0,.35]);
+function spine(parent,x,y,z,w,h,d){art.mesh(parent,art.dorsal,x,y+h*.20,z,w*1.45,h*1.4,d*1.7,'#8bb7b5',[.16,0,0],.20)}
+function godzilla(){const g=group(world,10.2,-20.5,.5);g.scale.setScalar(4.9);oval(g,0,2,0,.96,1.47,.86,palette.scale,.145);oval(g,0,1.9,.79,.65,1.12,.22,palette.belly,.13);for(let i=0;i<7;i++)voxelBox(g,0,1.18+i*.25,.91,.98-Math.abs(i-3)*.08,.20,.24,i%2?'#77867a':'#65776b');
+const head=group(g,0,3.8,0);portraits.godzilla(head);
+for(let side of[-1,1])for(let row=0;row<7;row++)for(let col=0;col<2;col++)art.mesh(g,art.soft,side*(.74+col*.1),1.25+row*.26,.45-col*.22,.20,.21,.11,'#49625a',[0,0,.35]);
 const tail=group(g,0,1.3,-.5);for(let i=0;i<10;i++){const s=1.16-i*.095,z=-i*.5;segment(tail,[i*i*.035,-i*.075,z+.26],[(i+1)*(i+1)*.035,-(i+1)*.075,z-.33],s,s,palette.scale);spine(tail,i*i*.035,.48-i*.065,z,.34,.55,.4)}for(let i=0;i<6;i++){spine(g,0,1.35+i*.54,-.92,.38,.68,.63);for(const s of[-1,1])spine(g,s*.48,1.3+i*.46,-.7,.22,.42,.45)}
 for(const x of[-.65,.65]){oval(g,x,.68,.12,.51,.68,.55,palette.scale,.14);voxelBox(g,x,.1,.61,.95,.4,1.52,palette.scale,.13);for(const dx of[-.28,0,.28]){box(g,x+dx,.1,1.4,.17,.23,.3,'#eff8c9');box(g,x+dx,.05,1.59,.12,.12,.13,'#fff7dd')}}
 const hold=arm(g,[-.95,2.85,.3],[-1.15,3.3,.7],[-1.32,3.15,.84],palette.scale,palette.belly,.47);for(const x of[-1.5,-1.28,-1.06])box(hold,x,3.22,1.16,.12,.27,.23,'#fff7db');const cheer=group(g,.9,2.9,.3);arm(cheer,[0,0,0],[.45,.27,.45],[.65,.94,.55],palette.scale,palette.belly,.45,true);g.rotation.y=-.14;g.userData={name:'哥吉拉',message:'嘎嗷——！右下抱緊 101，和滿城人群一起吶喊！',base:-20.5,head,cheer,hold,tail,kind:'godzilla'};return g}
 chars.push(mayor(),kong(),godzilla());
+// Preserve the established city layout when portrait geometry consumes a different amount of randomness.
+seed=989701977;
 for(const c of chars){const gripY=c.userData.kind==='kong'?3.55:c.userData.kind==='godzilla'?3.15:0,raise=.15*(c.position.y+28+gripY*c.scale.y);c.position.y+=raise;c.userData.base+=raise}
 // Articulate each complete head from the neck; the tower-gripping arms stay anchored.
 for(const c of chars){const u=c.userData,pivot=group(c,u.head.position.x,u.head.position.y-.45,u.head.position.z);u.head.position.set(0,.45,0);pivot.add(u.head);u.neck=pivot}

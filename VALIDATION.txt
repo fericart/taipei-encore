@@ -91,3 +91,17 @@ Tenth-edition validation: syntax/whitespace checks passed. qa/lowpoly-check.mjs 
 Actual WebGL: desktop front/side/fullscreen renders inspected, including the revised roof, hands, fur and hair. At time 124.85 the mayor was captured in prone cruise at progress 0.48 and direction alignment 1.000; at time 173.25 flight was false after return. A 390px iframe rendered without horizontal overflow, operated encore and electric-blue mode together, and showed the cow plaza. Current city population 2,826, with 1,249 rooftop spectators. A desktop sample reported 16.7ms frame interval, about 1.76 million rendered triangles and 1,002 draw calls including shadow/post passes. These are samples on this Mac, not a physical-phone or Safari benchmark.
 
 Retained QA observations: one short selector wait missed a flight window; a later actual flight capture succeeded. The desktop console error query returned none. The iframe QA tab logged an unattributed MutationObserver.observe non-Node error around browser interactions/reloads; no MutationObserver call exists in deployed source or the QA wrapper, and the rendered controls/scene continued operating. Its originating script was not available in the captured log, so it is retained here rather than attributed to application code or claimed resolved.
+
+
+第十一版：三位主角獨立頭型重做（2026-10-28）
+- 新增 portraits.js：蔣萬安採較修長的成人臉型、收斂眼型、鼻樑與下顎、短髮側分及微笑；大金剛改成大猩猩眉骨、寬鼻、口鼻和犬齒；哥吉拉改成前伸吻部、側眼與較細尖齒。三者不再共用一套人形笑臉。
+- 同步調整肩胸比例、毛皮／鱗甲配色。保留原本超人裝、5 號、飛行／抱樓／安可等動作與政策內容。沿用原城市亂數狀態，避免模型改動重新排列城市。
+- 修正晶體／背鰭共用幾何缺少頂點色造成的黑色牙齒與尖角；縮小新眼型的瞳孔追蹤範圍。
+- 參考圖只用作藝術方向，不分發圖片或作為材質；模型均為自製程序幾何，並非本人掃描或官方模型。
+驗證：
+- JS 語法、git diff --check、既有低多邊形封閉幾何檢查通過；補查牙齒／背鰭材質色屬性。新三個頭部 38／40／57 個網格皆有限值、有色屬性，皆保留兩個追蹤眼睛。
+- 既有 cinematic 檢查 7,200 幀、4 循環，最大抓握偏移 9.07e-15，代表性噴火最小間距 2.6408；飛行 10,801 幀與追蹤 8 個時間點通過。這些是既有動畫測試場景，不代表所有攝影機角度的逐幀外觀驗收。
+- 實際本機瀏覽器檢查正面、四分之三側面、背面與完整舞台；安可狀態 1.00、看板 0.62、胸章 0.75、抓握偏移 5.3e-15；未見頁面 console error。本機原生全螢幕可進出。
+- 390px iframe 實際載入、無水平溢出；Mac 上單次樣本 16.7ms，不代表實體手機或 Safari 效能。
+- 頭部檢視頁保存在 qa/portraits.html，需暫存複製至 dist/__portraits.html 供本機檢查，正式 dist 不含該頁。
+- 先前公開頁內建瀏覽器的全螢幕退出異常未在本輪修復；本輪未更動全螢幕程式。
