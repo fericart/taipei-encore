@@ -1,13 +1,12 @@
 import * as THREE from './assets/three.module.min.js';
-import {createLowPolyKit} from './lowpoly.js?v=20261028-12';
+import {createLowPolyKit} from './lowpoly.js?v=20261028-13';
 const art=createLowPolyKit(THREE);
-import {createCharacterPortraits} from './portraits.js?v=20261028-12';
-const portraits=createCharacterPortraits(THREE,art);
-import {createCinematic} from './cinematic.js?v=20261028-12';
-import {createParty,reservedPartySpace} from './party.js?v=20261028-12';
-import {createMayorFlight} from './flight.js?v=20261028-12';
-import {createFlightWatch} from './watch.js?v=20261028-12';
-import {policyTexture} from './billboards.js?v=20261028-12';
+import {createVoxelCharacters} from './voxel-characters.js?v=20261028-13';
+import {createCinematic} from './cinematic.js?v=20261028-13';
+import {createParty,reservedPartySpace} from './party.js?v=20261028-13';
+import {createMayorFlight} from './flight.js?v=20261028-13';
+import {createFlightWatch} from './watch.js?v=20261028-13';
+import {policyTexture} from './billboards.js?v=20261028-13';
 const $=s=>document.querySelector(s),host=$('#scene');
 const scene=new THREE.Scene();scene.background=new THREE.Color('#09051d');scene.fog=new THREE.FogExp2('#100725',.009);
 const camera=new THREE.PerspectiveCamera(46,1,.2,260);
@@ -40,47 +39,12 @@ function voxelBox(parent,x,y,z,w,h,d,colors,step=.145){solid(parent,x,y,z,w,h,d,
 function oval(parent,x,y,z,rx,ry,rz,colors,step=.15){solid(parent,x,y,z,rx*2,ry*2,rz*2,shade(colors),0,'oval')}
 function segment(parent,a,b,width,depth,colors){const va=new THREE.Vector3(...a),vb=new THREE.Vector3(...b),g=group(parent);g.position.copy(va).add(vb).multiplyScalar(.5);g.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),vb.clone().sub(va).normalize());voxelBox(g,0,0,0,width,va.distanceTo(vb)+.08,depth,colors);return g}
 function fist(parent,p,thick,colors){voxelBox(parent,...p,thick*1.15,thick,thick*1.2,colors,.12);for(let i=0;i<4;i++)box(parent,p[0]+(i-1.5)*thick*.24,p[1]+thick*.1,p[2]+thick*.64,thick*.21,thick*.5,thick*.22,shade(colors));box(parent,p[0]+thick*.6,p[1]-.12,p[2]+thick*.25,thick*.3,thick*.55,thick*.52,shade(colors))}
-function arm(parent,shoulder,elbow,hand,colors,skin,thick=.43,rock=false){const g=group(parent);segment(g,shoulder,elbow,thick,thick*1.1,colors);segment(g,elbow,hand,thick*.92,thick,colors);if(rock){const opened=group(g),rocking=group(g);openHand(opened,hand,thick*1.12,skin,colors===palette.scale);rockHand(rocking,hand,thick*1.12,skin,colors===palette.scale);rocking.visible=false;gestureHands.push({opened,rocking})}else fist(g,hand,thick,skin);return g}
-// Short, padded voxel fingers with stepped tips keep all five digits readable.
-function cartoonFinger(parent,a,b,width,depth,colors,tipColor){const start=new THREE.Vector3(...a),end=new THREE.Vector3(...b),g=group(parent),length=start.distanceTo(end);g.position.copy(start).add(end).multiplyScalar(.5);g.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),end.sub(start).normalize());voxelBox(g,0,0,0,width,length+width*.24,depth,colors);if(tipColor)voxelBox(g,0,length*.33,depth*.12,width*.66,width*.39,depth*.75,tipColor)}
-function openHand(parent,p,size,colors,claws=false){voxelBox(parent,p[0],p[1],p[2],size,size*.82,size*.49,colors,.085);const lengths=[.82,1.08,1.18,.91];for(let i=0;i<4;i++){const x=(i-1.5)*size*.255,spread=(i-1.5)*size*.08,h=(lengths[i]+.12)*size*.5,a=[p[0]+x,p[1]+size*.28,p[2]],b=[p[0]+x+spread,p[1]+size*.28+h,p[2]-.01];cartoonFinger(parent,a,b,size*.245,size*.27,colors,claws?'#e3ead1':null)}cartoonFinger(parent,[p[0]-size*.42,p[1]-size*.13,p[2]],[p[0]-size*.68,p[1]+size*.165,p[2]+size*.03],size*.28,size*.28,colors);}
-function rockHand(parent,p,size,colors,claws=false){voxelBox(parent,p[0],p[1],p[2],size,size*.78,size*.62,colors,.09);for(const side of[-1,1]){const x=p[0]+side*size*.36,h=size*(side<0?.44:.365);cartoonFinger(parent,[x,p[1]+size*.35,p[2]-.02],[x,p[1]+size*.35+h,p[2]-.02],size*.27,size*.28,colors,claws?'#e3ead1':null)}
-for(const side of[-1,1])box(parent,p[0]+side*size*.13,p[1]+size*.12,p[2]+size*.35,size*.25,size*.29,size*.24,shade(colors));segment(parent,[p[0]-size*.46,p[1]-.13,p[2]+size*.28],[p[0]+size*.14,p[1]-.06,p[2]+size*.45],size*.2,size*.2,colors)}
-host.dataset.handStyle='短圓低多邊形手掌';host.dataset.artStyle='成熟人物・巨獸原型';
+host.dataset.handStyle='短方塊手掌';host.dataset.artStyle='Minecraft 像素方塊・全新角色';
 const heroUniforms={heroTime:{value:0},heroFlight:{value:0}};
 function heroBadge(){const c=document.createElement('canvas');c.width=c.height=512;const ctx=c.getContext('2d');ctx.fillStyle='#ef3032';ctx.beginPath();ctx.arc(256,256,247,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fffdf9';ctx.beginPath();ctx.arc(256,256,214,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ef3032';ctx.textAlign='center';ctx.textBaseline='middle';ctx.font='900 390px Arial,sans-serif';ctx.fillText('5',256,282);const tx=new THREE.CanvasTexture(c);tx.colorSpace=THREE.SRGBColorSpace;return new THREE.Mesh(new THREE.PlaneGeometry(1.12,1.12),new THREE.MeshBasicMaterial({map:tx,transparent:true}))}
 function flyingCape(parent){const geo=new THREE.PlaneGeometry(1,1,10,14),pos=geo.attributes.position,uv=geo.attributes.uv;for(let i=0;i<pos.count;i++){const u=uv.getX(i),v=1-uv.getY(i);pos.setXYZ(i,(u-.5)*(1.28+v*1.7)-v*.22,2.98-v*3.15,-.48-v*.26-Math.sin(u*Math.PI)*v*.13)}geo.computeVertexNormals();const m=new THREE.MeshStandardMaterial({color:'#e92c43',emissive:'#b91533',emissiveIntensity:.12,roughness:.7,side:THREE.DoubleSide,flatShading:true});m.onBeforeCompile=shader=>{Object.assign(shader.uniforms,heroUniforms);shader.vertexShader='uniform float heroTime; uniform float heroFlight;\n'+shader.vertexShader;shader.vertexShader=shader.vertexShader.replace('#include <begin_vertex>',`vec3 transformed=vec3(position);float trailing=1.0-uv.y;transformed.y-=heroFlight*trailing*.9;transformed.z-=heroFlight*sin(trailing*3.14159)*.28;transformed.x+=sin(heroTime*2.2+trailing*5.5)*.22*trailing;transformed.z+=sin(heroTime*3.4+trailing*8.0+uv.x*5.0)*.34*pow(trailing,1.2);transformed.y+=sin(heroTime*2.7+uv.x*6.0)*.15*trailing;`)};m.customProgramCacheKey=()=> 'flowing-hero-cape-v2';const mesh=new THREE.Mesh(geo,m);mesh.frustumCulled=false;mesh.castShadow=true;mesh.receiveShadow=true;parent.add(mesh);return mesh}
-function mayor(){const g=group(world,0,-7.8,10.2);g.scale.setScalar(5);const blue=['#176cdb'],red=['#e72f46'];art.mesh(g,art.torso,0,2.18,0,1.42,1.65,.78,'#176cdb');voxelBox(g,0,1.39,0,1.16,.18,.78,['#f4c74a'],.085);box(g,0,1.39,.43,.29,.18,.1,'#ffde70');voxelBox(g,0,1.18,0,1.04,.3,.7,red,.1);const badge=heroBadge();badge.position.set(0,2.25,.415);g.add(badge);g.badge=badge;flyingCape(g);for(const side of[-1,1])box(g,side*.45,2.98,-.12,.29,.13,.65,'#f04751');
-const head=group(g,0,3.69,0);portraits.mayor(head);
-// Tailored layers, faceted shoulders, collar and boot cuffs stay on the animated rig.
-for(const side of[-1,1]){
- art.mesh(g,art.soft,side*.52,2.80,.02,.40,.43,.76,'#207be4',[0,0,-side*.20]);
- art.polygon(g,[[side*.12,2.99],[side*.48,2.99],[side*.54,2.79],[side*.30,2.82]],.36,.045,'#ef4350');
- voxelBox(g,side*.46,2.01,.345,.075,.73,.065,'#3589e7');
-}
-voxelBox(g,0,2.98,.02,.52,.16,.55,'#f4c875');
-const idleLegs=group(g);segment(idleLegs,[-.31,1.18,0],[-.41,.48,.04],.43,.52,blue);segment(idleLegs,[-.41,.48,.04],[-.5,-.26,.13],.45,.54,red);voxelBox(idleLegs,-.5,-.29,.31,.52,.25,.86,red,.1);segment(idleLegs,[.31,1.18,0],[.48,.78,.37],.44,.52,blue);segment(idleLegs,[.48,.78,.37],[.67,.38,.72],.45,.55,red);voxelBox(idleLegs,.7,.32,.91,.52,.25,.75,red,.1);
-for(const [x,y,z] of[[-.5,-.34,.32],[.7,.27,.91]])voxelBox(idleLegs,x,y,z,.55,.095,.87,'#9c2442');
-const hold=arm(g,[.74,2.77,0],[1.12,2.63,.3],[1.00,3.12,.61],blue,palette.skin,.4,true);const cheer=group(g,-.7,2.85,0);arm(cheer,[0,0,0],[-.10,.9,.04],[-.16,1.86,.08],blue,palette.skin,.43,true);box(cheer,-.16,1.59,.08,.44,.14,.46,'#ef354a');const flightLimbs=group(g);flightLimbs.visible=false;
-// One straight leading arm, one tucked arm, extended legs and pointed boots.
-arm(flightLimbs,[-.70,2.85,0],[-.59,3.90,.01],[-.49,4.98,.02],blue,palette.skin,.43);box(flightLimbs,-.49,4.68,.02,.44,.16,.48,'#ef354a');
-arm(flightLimbs,[.70,2.77,0],[.94,2.03,-.11],[.83,1.45,-.08],blue,palette.skin,.40);
-for(const side of[-1,1]){const hip=side*.31,knee=side*.34,ankle=side*.39,offset=side>0?.12:0;segment(flightLimbs,[hip,1.18,0],[knee,.22+offset,-.04],.43,.51,blue);segment(flightLimbs,[knee,.22+offset,-.04],[ankle,-.72+offset,-.09],.44,.52,red);voxelBox(flightLimbs,ankle,-.86+offset,-.07,.46,.36,.58,red,.09);voxelBox(flightLimbs,ankle,-1.01+offset,-.07,.48,.08,.61,'#a92945');}
-g.rotation.z=-.07;g.rotation.x=-.06;g.userData={name:'蔣萬安',message:'ROCK ON！披上紅斗篷，朝台北的夜空飛起來！',base:-7.8,head,cheer,hold,idleLegs,flightLimbs,kind:'mayor'};return g}
-function kong(){const g=group(world,-10,1.5,-.3);g.scale.setScalar(4.15);art.mesh(g,art.torso,0,2.1,0,2.38,2.65,1.60,'#584236');art.mesh(g,art.torso,0,2.12,.69,1.60,1.95,.32,'#786454');for(const s of[-1,1])oval(g,s*.39,2.54,.75,.43,.32,.18,'#806b59');for(const s of[-1,1])oval(g,s*.82,2.8,0,.5,.65,.63,palette.fur,.14);
-const head=group(g,0,3.65,.1);portraits.kong(head);
-voxelBox(g,0,2.94,.93,.66,.25,.17,['#f42e67','#e52d58'],.10);art.polygon(g,[[-.19,2.78],[.19,2.78],[.26,2.06],[0,1.86],[-.26,2.06]],.91,.14,'#dd3654');box(g,0,2.35,1.05,.18,.21,.04,'#ffdc4d');
-segment(g,[-.6,1.2,0],[-.8,.58,.12],.78,.82,palette.fur);fist(g,[-.8,.22,.4],.78,palette.tan);segment(g,[.65,1.23,0],[1.26,1.35,.18],.72,.8,palette.fur);segment(g,[1.26,1.35,.18],[1.49,.97,.5],.64,.68,palette.fur);fist(g,[1.53,.87,.64],.65,palette.tan);
-const hold=arm(g,[1.02,2.9,0],[1.55,3.43,-.18],[2.02,3.55,-.25],palette.fur,palette.tan,.73);for(let i=0;i<4;i++)box(hold,2.22,3.35+i*.17,-.48,.37,.14,.26,shade(palette.tan));const cheer=group(g,-1.1,2.85,.05);arm(cheer,[0,0,0],[-.72,-.25,.45],[-.12,-.6,1.03],palette.fur,palette.tan,.82,true);for(const side of[-1,1])for(let j=0;j<5;j++){art.mesh(head,art.crystal,side*(.66+j*.04),-.03-j*.15,.35,.30,.52,.48,j%2?'#4d392f':'#65503e',[0,0,side*.35+Math.PI]);art.mesh(g,art.crystal,side*(.94+j*.025),2.92-j*.16,.13,.42,.65,.64,j%2?'#4c382e':'#65503e',[.1,0,side*.35+Math.PI]);}
-g.userData={name:'大金剛',message:'吼吼！左上攀樓、捶胸應援！整座台北一起歡呼！',base:1.5,head,cheer,hold,kind:'kong'};return g}
-function spine(parent,x,y,z,w,h,d){art.mesh(parent,art.dorsal,x,y+h*.20,z,w*1.45,h*1.4,d*1.7,'#8bb7b5',[.16,0,0],.20)}
-function godzilla(){const g=group(world,10.2,-20.5,.5);g.scale.setScalar(4.9);oval(g,0,2,0,.96,1.47,.86,palette.scale,.145);oval(g,0,1.9,.79,.65,1.12,.22,palette.belly,.13);for(let i=0;i<7;i++)voxelBox(g,0,1.18+i*.25,.91,.98-Math.abs(i-3)*.08,.20,.24,i%2?'#77867a':'#65776b');
-const head=group(g,0,3.8,0);portraits.godzilla(head);
-for(let side of[-1,1])for(let row=0;row<7;row++)for(let col=0;col<2;col++)art.mesh(g,art.soft,side*(.74+col*.1),1.25+row*.26,.45-col*.22,.20,.21,.11,'#49625a',[0,0,.35]);
-const tail=group(g,0,1.3,-.5);for(let i=0;i<10;i++){const s=1.16-i*.095,z=-i*.5;segment(tail,[i*i*.035,-i*.075,z+.26],[(i+1)*(i+1)*.035,-(i+1)*.075,z-.33],s,s,palette.scale);spine(tail,i*i*.035,.48-i*.065,z,.34,.55,.4)}for(let i=0;i<6;i++){spine(g,0,1.35+i*.54,-.92,.38,.68,.63);for(const s of[-1,1])spine(g,s*.48,1.3+i*.46,-.7,.22,.42,.45)}
-for(const x of[-.65,.65]){oval(g,x,.68,.12,.51,.68,.55,palette.scale,.14);voxelBox(g,x,.1,.61,.95,.4,1.52,palette.scale,.13);for(const dx of[-.28,0,.28]){box(g,x+dx,.1,1.4,.17,.23,.3,'#eff8c9');box(g,x+dx,.05,1.59,.12,.12,.13,'#fff7dd')}}
-const hold=arm(g,[-.95,2.85,.3],[-1.15,3.3,.7],[-1.32,3.15,.84],palette.scale,palette.belly,.47);for(const x of[-1.5,-1.28,-1.06])box(hold,x,3.22,1.16,.12,.27,.23,'#fff7db');const cheer=group(g,.9,2.9,.3);arm(cheer,[0,0,0],[.45,.27,.45],[.65,.94,.55],palette.scale,palette.belly,.45,true);g.rotation.y=-.14;g.userData={name:'哥吉拉',message:'嘎嗷——！右下抱緊 101，和滿城人群一起吶喊！',base:-20.5,head,cheer,hold,tail,kind:'godzilla'};return g}
-chars.push(mayor(),kong(),godzilla());
+const newCast=createVoxelCharacters(THREE,world,{makeBadge:heroBadge,makeCape:flyingCape});
+chars.push(...newCast.characters);gestureHands.push(...newCast.gestureHands);
 // Preserve the established city layout when portrait geometry consumes a different amount of randomness.
 seed=989701977;
 for(const c of chars){const gripY=c.userData.kind==='kong'?3.55:c.userData.kind==='godzilla'?3.15:0,raise=.15*(c.position.y+28+gripY*c.scale.y);c.position.y+=raise;c.userData.base+=raise}
@@ -214,8 +178,8 @@ updateHelicopters(0);
 
 const party=createParty(THREE,world,{group,box,voxelBox,oval,segment,sign},policySigns,chars[0].badge);
 host.dataset.cowCount='3';host.dataset.maxSpiderCount='1';
-const cinematic=createCinematic(THREE,world,chars,{group,box,voxelBox,segment,fist});
-flush();
+const cinematic=createCinematic(THREE,world,chars,newCast.helpers);
+newCast.flush();flush();
 // Lightweight HDR glow pass: original shader, no downloaded effects or imagery.
 const rt=new THREE.WebGLRenderTarget(1,1,{type:THREE.HalfFloatType,depthBuffer:true});const postScene=new THREE.Scene(),postCamera=new THREE.OrthographicCamera(-1,1,1,-1,0,1);const postMaterial=new THREE.ShaderMaterial({uniforms:{t:{value:rt.texture},px:{value:new THREE.Vector2(1,1)}},vertexShader:'varying vec2 uvv; void main(){uvv=uv;gl_Position=vec4(position.xy,0.,1.);}',fragmentShader:`uniform sampler2D t; uniform vec2 px; varying vec2 uvv;
 vec3 bright(vec2 q){vec3 c=texture2D(t,q).rgb;return max(c-.72,vec3(0.));}

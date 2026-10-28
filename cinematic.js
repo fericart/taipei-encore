@@ -10,11 +10,11 @@ export function createCinematic(THREE,world,chars,{group,box,voxelBox,segment,fi
  function anchorBody(c,roll){const u=c.userData;c.rotation.z=roll;scratch.copy(u.gripLocal).multiply(c.scale).applyQuaternion(c.quaternion);c.position.copy(u.gripAnchor).sub(scratch)}
  // A separate bent arm makes the chest contact visible while the other hand grips 101.
  const pound=group(kong),upper=group(pound),fore=group(pound),knuckles=group(pound);
- voxelBox(upper,0,0,0,.78,1,.83,'#584236',.13);voxelBox(fore,0,0,0,.72,1,.78,'#584236',.12);fist(knuckles,[0,0,0],.78,'#847265');pound.visible=false;
+ voxelBox(upper,0,0,0,.78,1,.83,'#714a2f',.13);voxelBox(fore,0,0,0,.72,1,.78,'#714a2f',.12);fist(knuckles,[0,0,0],.78,'#d9b989');pound.visible=false;
  const shoulder=new THREE.Vector3(-1.05,2.85,.08),elbow=new THREE.Vector3(),hand=new THREE.Vector3();
  function fitBone(mesh,a,b){mesh.position.copy(a).add(b).multiplyScalar(.5);scratch.copy(b).sub(a);mesh.scale.y=scratch.length();mesh.quaternion.setFromUnitVectors(Y,scratch.normalize())}
  // The complete breath effect is attached to the mouth, so every sweep follows the head.
- const breath=group(gu.head,0,-.275,1.38),layers=[];
+ const breath=group(gu.head,0,-.296,1.38),layers=[];
  for(const [radius,color,opacity]of[[.54,'#116bff',.20],[.31,'#29d9ff',.45],[.13,'#d9ffff',.85]]){
   const mesh=new THREE.Mesh(new THREE.CylinderGeometry(radius,.065,6.6,10,8,true),new THREE.MeshBasicMaterial({color,transparent:true,opacity,blending:THREE.AdditiveBlending,depthWrite:false,side:THREE.DoubleSide}));mesh.rotation.x=Math.PI/2;mesh.position.z=3.3;breath.add(mesh);layers.push({mesh,opacity});
  }
